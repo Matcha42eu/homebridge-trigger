@@ -33,10 +33,8 @@ Install homebridge-trigger plugin and add accessories to your config.json `acces
 "accessories": [
         {
           "accessory": "FakeTriggerMatcha",
-          "name": "Trigger every 60 sec",
-          "interval": 60
-          "name2": "Trigger every hour",
-          "interval2": 3600
+          "name": "Trigger every hour",
+          "interval": 3600
         }
     ]
 ```
