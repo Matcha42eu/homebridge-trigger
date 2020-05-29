@@ -8,7 +8,7 @@ module.exports = (homebridge) => {
   HomebridgeAPI = homebridge
   UUIDGen = homebridge.hap.uuid
 
-  homebridge.registerAccessory("homebridge-trigger", "FakeTrigger", FakeTrigger);
+  homebridge.registerAccessory("homebridge-trigger-matcha", "FakeTriggerMatcha", FakeTrigger);
 }
 
 class FakeTrigger {
@@ -32,9 +32,34 @@ class FakeTrigger {
       //this.log(`Setting state to ${this._sensor.contactState}`)
       this._sensor.setCharacteristic(Characteristic.ContactSensorState, this._sensor.contactState)
     }, this.interval)
+      
+      
+// dirty hack
+      
+        this.name2 = config.name2
+        this.interval2 = config.interval2 < 60 ? 60000 : config.interval * 1000 // Lets not flood HomeKit
+      
+        this._sensor2 = new Service.ContactSensor(this.name2)
+        this._sensor2.contactState = false
+        this._sensor2.getCharacteristic(Characteristic.ContactSensorState)
+          .on('get', (callback) => {
+            //this.log(`Gettings state ${this._sensor.contactState}`)
+            callback(null, this._sensor2.contactState)
+          })
+        
+
+        setInterval( () => {
+          // Change sensor state every this.interval seconds
+          this._sensor2.contactState = !this._sensor2.contactState
+          //this.log(`Setting state to ${this._sensor.contactState}`)
+          this._sensor2.setCharacteristic(Characteristic.ContactSensorState, this._sensor2.contactState)
+        }, this.interval2)
+
+
+
   }
 
   getServices () {
-    return [this._sensor]
+      return [this._sensor, this._sensor2]
   }
 }
